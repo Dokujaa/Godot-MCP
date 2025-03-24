@@ -1,0 +1,69 @@
+[gd_scene load_steps=2 format=3 uid="uid://dxvt86ck6b2a4"]
+
+[ext_resource type="Script" path="res://addons/godot_mcp/ui/mcp_panel.gd" id="1_4g23r"]
+
+[node name="MCPPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4g23r")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatusPanel" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="VBoxContainer/StatusPanel"]
+layout_mode = 2
+text = "Status: Not running"
+
+[node name="ConfigPanel" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ConfigPanel"]
+layout_mode = 2
+
+[node name="PortLabel" type="Label" parent="VBoxContainer/ConfigPanel/HBoxContainer"]
+layout_mode = 2
+text = "Port:"
+
+[node name="PortField" type="SpinBox" parent="VBoxContainer/ConfigPanel"]
+layout_mode = 2
+min_value = 1024.0
+max_value = 65535.0
+value = 6400.0
+alignment = 1
+
+[node name="ButtonPanel" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ButtonPanel"]
+layout_mode = 2
+alignment = 1
+
+[node name="StartButton" type="Button" parent="VBoxContainer/ButtonPanel"]
+layout_mode = 2
+text = "Start Server"
+
+[node name="StopButton" type="Button" parent="VBoxContainer/ButtonPanel"]
+layout_mode = 2
+disabled = true
+text = "Stop Server"
+
+[node name="LogPanel" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LogDisplay" type="TextEdit" parent="VBoxContainer/LogPanel"]
+layout_mode = 2
+editable = false
+wrap_mode = 1
