@@ -2,7 +2,7 @@
 
 A plugin that allows external processes to communicate with the Godot engine in a modular and programmable way.
 
-🎥 [Watch the video on Twitter](https://twitter.com/yourusername/status/1234567890123456789) (FOLLOW ME PLS PLS)
+🎥 [Watch the video on Twitter](https://x.com/dokuuja/status/1903612403717148855?s=46) (FOLLOW ME PLS PLS)
 
 ---
 
