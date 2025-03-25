@@ -1,4 +1,4 @@
-# 🎮 Godot MCP (Modular Control Plugin)
+# 🎮 Godot MCP 
 
 A plugin that allows external processes to communicate with the Godot engine in a modular and programmable way.
 
