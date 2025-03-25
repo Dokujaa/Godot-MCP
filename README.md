@@ -12,4 +12,4 @@ Follow these steps to get the plugin up and running:
 
 ```bash
 git clone https://github.com/yourusername/godot-mcp.git
-cd godot-mcp
+cd Godot-MCP
