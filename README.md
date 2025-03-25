@@ -1,23 +1,15 @@
-Working Godot MCP
+# 🎮 Godot MCP (Modular Control Plugin)
 
+A plugin that allows external processes to communicate with the Godot engine in a modular and programmable way.
 
+---
 
-HOW TO USE
+## 🚀 Getting Started
 
-1. CLONE THE REPO
-2. MAKE A GODOT PROJECT
-3. ADD THE ADDONS FILE TO THE GODOT PROJECT, WHICH ALLOWS YOU TO ENABLE THE MCP PLUGIN
-4. CREATE A VENV WITH PYTHON3 AND INSTALL ALL REQUIREMENTS
-5. RUN SERVER.PY
-6. ADD THE FOLLOWING TO YOUR CLAUDE_DESKTOP_CONFIG.JSON
+Follow these steps to get the plugin up and running:
 
-{
-  "mcpServers": {
-    "godotMCP": {
-      "command": "/Path/Togodot-mcp/python/venv/bin/python3",
-      "args": [
-        "/Path/To/server.py"
-      ]
-    }
-  }
-}
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/godot-mcp.git
+cd godot-mcp
