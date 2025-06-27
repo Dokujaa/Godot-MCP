@@ -1,8 +1,6 @@
 # 🎮 Godot MCP 
 
-A plugin that allows external processes to communicate with the Godot engine in a modular and programmable way.
-
-🎥 [Watch the video on Twitter](https://x.com/dokuuja/status/1903612403717148855?s=46) (FOLLOW ME PLS PLS)
+A plugin that allows external processes to communicate with the Godot engine in a modular and programmable way
 
 ---
 
