@@ -5,6 +5,7 @@ from .object_tools import register_object_tools
 from .asset_tools import register_asset_tools
 from .material_tools import register_material_tools
 from .editor_tools import register_editor_tools
+from .meshy_tools import register_meshy_tools
 
 def register_all_tools(mcp):
     """Register all tools with the MCP server."""
@@ -14,3 +15,4 @@ def register_all_tools(mcp):
     register_asset_tools(mcp)
     register_material_tools(mcp)
     register_editor_tools(mcp)
+    register_meshy_tools(mcp)

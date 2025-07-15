@@ -66,7 +66,13 @@ func handle_command(command_type, params):
 		"CREATE_PREFAB":
 			return handle_create_packed_scene(params)
 		"INSTANTIATE_PREFAB":
-			return handle_instantiate_packed_scene(params)
+			return handle_instantiate_prefab(params)
+		"SHOW_MESSAGE":
+			return handle_show_message(params)
+		"REIMPORT_ASSET":
+			return handle_reimport_asset(params)
+		"IMPORT_GLB_SCENE":
+			return handle_import_glb_scene(params)
 		_:
 			return {"error": "Unknown command type: " + command_type}
 
@@ -1002,7 +1008,7 @@ func handle_create_packed_scene(params):
 		"message": "Packed scene created successfully from " + object_name
 	}
 
-func handle_instantiate_packed_scene(params):
+func handle_instantiate_prefab(params):
 	"""Instantiate a packed scene (prefab) into the current scene."""
 	if not params.has("prefab_path"):
 		return {"error": "Missing required parameter: prefab_path"}
@@ -1249,7 +1255,15 @@ func handle_set_property(params):
 	
 	# Check if the property actually changed
 	var new_value = node.get(property_name)
-	if new_value == previous_value and new_value != converted_value:
+	# Handle type-safe comparison - don't compare different types directly
+	var values_different = false
+	if typeof(new_value) == typeof(converted_value):
+		values_different = (new_value != converted_value)
+	else:
+		# Different types means they're different values
+		values_different = true
+	
+	if new_value == previous_value and values_different:
 		return {"warning": "Property might be read-only or conversion failed: " + property_name, "previous_value": previous_value, "attempted_value": converted_value}
 	
 	return {"message": "Property set: " + property_name + " = " + str(converted_value)}
@@ -2447,3 +2461,122 @@ func handle_delete_file(params):
 	return {
 		"message": "File deleted successfully: " + file_path
 	}
+
+func handle_show_message(params):
+	if not params.has("message"):
+		return {"error": "Missing required parameter: message"}
+	
+	var message = params.message
+	
+	# Show a message dialog
+	editor_plugin.get_editor_interface().show_message_notification(message)
+	
+	return {"message": "Message shown successfully"}
+
+func handle_reimport_asset(params):
+	if not params.has("asset_path"):
+		return {"error": "Missing required parameter: asset_path"}
+	
+	var asset_path = params.asset_path
+	
+	# Force a filesystem scan to detect the new file
+	var editor_filesystem = editor_plugin.get_editor_interface().get_resource_filesystem()
+	if editor_filesystem:
+		editor_filesystem.scan()
+		# Also scan the specific directory
+		var dir_path = asset_path.get_base_dir()
+		editor_filesystem.scan_sources()
+		
+		return {
+			"message": "Triggered filesystem scan for: " + asset_path
+		}
+	else:
+		return {"error": "Could not access editor filesystem"}
+
+func handle_import_glb_scene(params):
+	if not params.has("glb_path"):
+		return {"error": "Missing required parameter: glb_path"}
+	
+	var glb_path = params.glb_path
+	var name = params.get("name", "")
+	var position = params.get("position", [0, 0, 0])
+	var rotation = params.get("rotation", [0, 0, 0])
+	var scale = params.get("scale", [1, 1, 1])
+	
+	var editor_interface = editor_plugin.get_editor_interface()
+	var current_scene = editor_interface.get_edited_scene_root()
+	
+	if current_scene == null:
+		return {"error": "No scene is currently open"}
+	
+	# Check if the GLB file exists
+	if not FileAccess.file_exists(glb_path):
+		return {"error": "GLB file not found: " + glb_path}
+	
+	# Try to load the GLB as a PackedScene
+	var glb_scene = load(glb_path)
+	if not glb_scene:
+		return {"error": "Failed to load GLB file: " + glb_path}
+	
+	# Check if it's a PackedScene
+	if glb_scene is PackedScene:
+		# Instantiate the packed scene
+		var instance = glb_scene.instantiate()
+		if not instance:
+			return {"error": "Failed to instantiate GLB scene"}
+		
+		# Set the name
+		if name != "":
+			instance.name = name
+		else:
+			# Use filename without extension
+			var filename = glb_path.get_file().get_basename()
+			instance.name = filename
+		
+		# Add to current scene
+		current_scene.add_child(instance)
+		instance.owner = current_scene
+		
+		# Set ownership recursively for all children
+		_set_owner_recursive(instance, current_scene)
+		
+		# Set transform if it's a 3D node
+		if instance is Node3D:
+			instance.position = Vector3(position[0], position[1], position[2])
+			instance.rotation_degrees = Vector3(rotation[0], rotation[1], rotation[2])
+			instance.scale = Vector3(scale[0], scale[1], scale[2])
+		
+		return {
+			"success": true,
+			"instance_name": instance.name,
+			"message": "GLB scene imported successfully as: " + instance.name
+		}
+	else:
+		# If it's not a PackedScene, try to create a MeshInstance3D
+		var node_name = name if name != "" else glb_path.get_file().get_basename()
+		
+		# Create a MeshInstance3D
+		var mesh_instance = MeshInstance3D.new()
+		mesh_instance.name = node_name
+		
+		# Try to set the mesh
+		if glb_scene is Mesh:
+			mesh_instance.mesh = glb_scene
+		else:
+			# Try loading it differently
+			return {"error": "GLB file is not a PackedScene or Mesh resource"}
+		
+		# Add to scene
+		current_scene.add_child(mesh_instance)
+		mesh_instance.owner = current_scene
+		
+		# Set transform
+		mesh_instance.position = Vector3(position[0], position[1], position[2])
+		mesh_instance.rotation_degrees = Vector3(rotation[0], rotation[1], rotation[2])
+		mesh_instance.scale = Vector3(scale[0], scale[1], scale[2])
+		
+		return {
+			"success": true,
+			"instance_name": mesh_instance.name,
+			"message": "GLB imported as MeshInstance3D: " + mesh_instance.name
+		}
