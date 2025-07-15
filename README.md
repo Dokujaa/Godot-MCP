@@ -79,7 +79,7 @@ git clone https://github.com/Dokujaa/Godot-MCP.git
    {
      "mcpServers": {
        "godot": {
-         "command": "python",
+         "command": "/path/to/your/godot-mcp/python/venv/bin/python",
          "args": ["/path/to/your/godot-mcp/python/server.py"],
          "env": {}
        }
